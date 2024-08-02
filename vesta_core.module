@@ -91,6 +91,7 @@ function set_page_classes(&$variables){
         $variables['page_class'][] = "not-front";
     }
 
+    $route_name = \Drupal::routeMatch()->getRouteName();
     $node = \Drupal::routeMatch()->getParameter('node');
     $view = \Drupal::routeMatch()->getParameter('view_id');
     $term = \Drupal::routeMatch()->getParameter('taxonomy_term');
@@ -138,6 +139,15 @@ function set_page_classes(&$variables){
             $variables['page_class'][] = 'page-taxonomy-term--' . $term_id;
         }
     }
+
+    // Добавляем классы страницы чекаута и корзины
+    if ($route_name == 'commerce_checkout.form') {
+        $variables['page_class'][] = 'page-checkout';
+    }
+
+    if ($route_name == 'commerce_cart.page') {
+        $variables['page_class'][] = 'page-cart';
+    }
 }
 
 //добавляет классы в body
@@ -157,13 +167,13 @@ function set_body_classes(&$variables){
 
     if(isset($node)) {
         if ($node instanceof Node) {
-            $variables['attributes']['class'][] = 'page-node';
-            $variables['attributes']['class'][] = 'page-node--' . $node->id();
-            $variables['attributes']['class'][] = 'page-node-type--' . $node->bundle();
+            $variables['attributes']['class'][] = 'body-node';
+            $variables['attributes']['class'][] = 'body-node--' . $node->id();
+            $variables['attributes']['class'][] = 'body-node-type--' . $node->bundle();
         }
         else {
-            $variables['attributes']['class'][] = 'page-node';
-            $variables['attributes']['class'][] = 'page-node--' . $node->id();
+            $variables['attributes']['class'][] = 'body-node';
+            $variables['attributes']['class'][] = 'body-node--' . $node->id();
         }
     }
 
@@ -175,30 +185,41 @@ function set_body_classes(&$variables){
         if(isset($term)) {
             if ($term instanceof \Drupal\taxonomy\Entity\Term) {
                 $term_id = $term->bundle();
-                $variables['attributes']['class'][] = 'page-taxonomy-term';
-                $variables['attributes']['class'][] = 'page-taxonomy-term--' . $term_id;
+                $variables['attributes']['class'][] = 'body-taxonomy-term';
+                $variables['attributes']['class'][] = 'body-taxonomy-term--' . $term_id;
             }
         }
         else{
-            $variables['attributes']['class'][] = 'page-view';
-            $variables['attributes']['class'][] = 'page-view--'.$view;
+            $variables['attributes']['class'][] = 'body-view';
+            $variables['attributes']['class'][] = 'body-view--'.$view;
         }
     }
     // Добавляем к body класс продукта
     if(isset($product)) {
         if ($product instanceof \Drupal\commerce_product\Entity\ProductInterface) {
             $product_type = $product->bundle(); // Получить тип продукта
-            $variables['attributes']['class'][] = 'page-product';
-            $variables['attributes']['class'][] = 'page-product-type--' . $product_type;
+            $variables['attributes']['class'][] = 'body-product';
+            $variables['attributes']['class'][] = 'body-product-type--' . $product_type;
         }
     }
     // Добавляем к body класс термина
     if(isset($term)) {
         if ($term instanceof \Drupal\taxonomy\Entity\Term) {
             $term_id = $term->bundle();
-            $variables['attributes']['class'][] = 'page-taxonomy-term';
-            $variables['attributes']['class'][] = 'page-taxonomy-term--' . $term_id;
+            $variables['attributes']['class'][] = 'body-taxonomy-term';
+            $variables['attributes']['class'][] = 'body-taxonomy-term--' . $term_id;
         }
+    }
+
+
+    $route_name = \Drupal::routeMatch()->getRouteName();
+    // Добавляем классы страницы чекаута и корзины
+    if ($route_name == 'commerce_checkout.form') {
+        $variables['attributes']['class'][] = 'body-checkout';
+    }
+
+    if ($route_name == 'commerce_cart.page') {
+        $variables['attributes']['class'][] = 'body-cart';
     }
 }
 
