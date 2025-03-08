@@ -1,0 +1,78 @@
+<?php
+
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\EventSubscriber\AjaxResponseSubscriber;
+use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
+use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_form_FORM_ID_alter(): views_form_commerce_cart_form_default.
+ */
+
+function ajaxify_commerce_form_views_form_commerce_cart_form_default_alter(array &$form, FormStateInterface $form_state): void
+{
+    // AJAXify "update" button
+    $form['#action'] = Url::fromRoute('commerce_cart.page')->toString();
+    $form['actions']['submit']['#ajax'] = [
+        'callback' => 'ajaxify_commerce_ajax_update_cart_form',
+        'event' => 'click',
+    ];
+    $form['actions']['submit']['#attributes']['class'][] = 'js-hide';
+
+    // AJAXify "quantity" inputs
+    $form['actions']['submit']['#name'] = 'update';
+    foreach (Element::children($form['edit_quantity']) as $key) {
+        $form['edit_quantity'][$key]['#ajax'] = [
+            'event' => 'change',
+            'callback' => '',
+            'trigger_as' => [
+                'name' => 'update',
+            ],
+        ];
+    }
+
+    // AJAXify "delete" buttons
+    foreach (Element::children($form['remove_button']) as $key) {
+        $form['remove_button'][$key]['#ajax'] = [
+            'callback' => 'ajaxify_commerce_ajax_update_cart_form',
+            'event' => 'click',
+        ];
+    }
+}
+
+/**
+ * AJAX update cart page.
+ */
+function ajaxify_commerce_ajax_update_cart_form(array &$form, FormStateInterface $form_state): AjaxResponse
+{
+    // Delete status messages
+    \Drupal::messenger()->deleteByType(MessengerInterface::TYPE_STATUS);
+
+    // Create fake request to cart page
+    $fake_request = \Drupal::request()->duplicate();
+    $fake_request->query->replace(UrlHelper::filterQueryParameters($fake_request->query->all(), [
+        FormBuilderInterface::AJAX_FORM_REQUEST,
+        AjaxResponseSubscriber::AJAX_REQUEST_PARAMETER,
+        MainContentViewSubscriber::WRAPPER_FORMAT,
+    ]));
+    $fake_request->request->replace([]);
+    \Drupal::requestStack()->push($fake_request);
+
+    // Get cart page content
+    $cart_page_content = \Drupal::service('controller_resolver')->getController($fake_request)();
+
+    // Update cart page content in browser
+    $response = new AjaxResponse();
+    $response->addCommand(new ReplaceCommand('.cart-form', $cart_page_content));
+
+    // Remove fake request
+    \Drupal::requestStack()->pop();
+
+    return $response;
+}
