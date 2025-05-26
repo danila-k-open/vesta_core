@@ -2,7 +2,7 @@
   "name": "drupal/vesta_core",
   "description": "Модуль ядра Vesta",
   "type": "drupal-module",
-  "license": "MIT License",
+  "license": "MIT",
   "minimum-stability": "dev",
   "authors": [
     {
@@ -10,5 +10,8 @@
       "homepage": "https://github.com/danila-k-open",
       "role": "Maintainer"
     }
-  ]
+  ],
+  "extra": {
+    "installer-name": "vesta_core"
+  }
 }

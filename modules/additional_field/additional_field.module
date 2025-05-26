@@ -12,21 +12,20 @@ function print_field_info($setting_name): void
     $table_values = $config->get('table');
     $table_arr = [];
 
-    if(!empty($table_values)){
+    if (!empty($table_values)) {
         foreach ($table_values as $key => $value) {
             $table_arr[$value['variable_name']] = $value['variable_value'];
         }
     }
-    if(!empty($my_setting)){
-        print $my_setting;
-    }elseif (!empty($table_arr[$setting_name])) {
-        print $table_arr[$setting_name];
-    }else{
-        print "Ошибка переменной!";
+    if (!empty($my_setting)) {
+        return $my_setting;
+    } elseif (!empty($table_arr[$setting_name])) {
+        return $table_arr[$setting_name];
     }
 }
 
-function additional_field_preprocess(&$variables, $hook) {
+function additional_field_preprocess(&$variables, $hook)
+{
     $form_config = \Drupal::config('additional_field.settings');
     $variables['get_phone'] = $form_config->get('phone_number');
     $variables['get_mail'] = $form_config->get('mail');
@@ -42,7 +41,7 @@ function additional_field_preprocess(&$variables, $hook) {
 
     $table_values = $form_config->get('table');
     $table_arr = [];
-    if(!empty($table_values)){
+    if (!empty($table_values)) {
         foreach ($table_values as $key => $value) {
             if (!empty($value['variable_name'])) {
                 $variables[$value['variable_name']] = $value['variable_value'];
