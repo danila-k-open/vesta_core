@@ -1,5 +1,8 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+
 /**
  * @file
  * Primary module hooks for Vesta Core module.
@@ -90,12 +93,12 @@ function set_page_classes(&$variables){
     }else{
         $variables['page_class'][] = "not-front";
     }
-
-    $route_name = \Drupal::routeMatch()->getRouteName();
-    $node = \Drupal::routeMatch()->getParameter('node');
-    $view = \Drupal::routeMatch()->getParameter('view_id');
-    $term = \Drupal::routeMatch()->getParameter('taxonomy_term');
-    $product = \Drupal::routeMatch()->getParameter('commerce_product');
+    $route_match = \Drupal::routeMatch();
+    $route_name = $route_match->getRouteName();
+    $node = $route_match->getParameter('node');
+    $view = $route_match->getParameter('view_id');
+    $term = $route_match->getParameter('taxonomy_term');
+    $product = $route_match->getParameter('commerce_product');
 
     // Добавляем к page класс ноды
     if(isset($node)) {
@@ -246,7 +249,7 @@ function vesta_core_preprocess_field(&$variables, $hook) {
     $request = \Drupal::request();
     $route_match = \Drupal::routeMatch();
     $title = \Drupal::service('title_resolver')->getTitle($request, $route_match->getRouteObject());
-    $parts = explode('.', \Drupal::routeMatch()->getRouteName());
+    $parts = explode('.', $route_match->getRouteName());
 
 
     $requestStack = \Drupal::service('request_stack');
@@ -272,5 +275,40 @@ function drupal_get_module_path($module){
         return $module_path;
     }else{
         return 'error module path';
+    }
+}
+function vesta_core_form_commerce_order_item_add_to_cart_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+    $request = \Drupal::request();
+
+    $is_views_ajax =
+        $request->attributes->get('_route') === 'views.ajax' ||
+        preg_match('{views(\.|/)ajax}', $request->getRequestUri());
+
+    if (!$is_views_ajax) {
+        return;
+    }
+
+    // Достаём продукт из storage (у тебя это уже сработало).
+    $storage = $form_state->getStorage();
+    if (empty($storage['product'])) {
+        return;
+    }
+
+    /** @var \Drupal\commerce_product\Entity\ProductInterface $product */
+    $product = $storage['product'];
+
+    // 1) Канонический URL товара (в виде path).
+    $product_path = $product->toUrl('canonical')->toString();
+
+    // 2) Жёстко выставляем action (важно и #action, и HTML-атрибут).
+    $form['#action'] = $product_path;
+    $form['#attributes']['action'] = $product_path;
+
+    // 3) Подправляем ajax submit (и только ajax_form=1, wrapper добавит Drupal сам).
+    if (isset($form['actions']['submit']['#ajax'])) {
+        $form['actions']['submit']['#ajax']['url'] = $product->toUrl('canonical', [
+            'query' => ['ajax_form' => 1],
+        ]);
+        $form['actions']['submit']['#ajax']['options']['query'] = ['ajax_form' => 1];
     }
 }
