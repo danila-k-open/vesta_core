@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Module file for the Views Photo Grid module.
+ */
+
+/**
+ * Preprocesses variables for the photo grid template.
+ */
+function template_preprocess_views_photo_grid_style(&$vars) {
+  $view = $vars['view'];
+  /* @var \Drupal\views_photo_grid\Plugin\views\style\PhotoGrid $handler */
+  $handler  = $view->style_plugin;
+
+  $image_field = $handler->getImageFieldName();
+  if (!$image_field) {
+    return;
+  }
+
+  $vars['items'] = [];
+
+  foreach ($view->result as $key => $row) {
+    $vars['items'][] = $handler->getField($key, $image_field);
+  }
+
+  $vars['#attached']['drupalSettings']['viewsPhotoGrid']['gridPadding'] = $handler->options['grid_padding'];
+  $vars['#attached']['drupalSettings']['viewsPhotoGrid']['maxHeight'] = $handler->options['max_height'];
+  $vars['#attached']['library'][] =  'views_photo_grid/views_photo_grid';
+}
+
