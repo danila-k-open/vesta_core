@@ -5,7 +5,7 @@
  * Primary module hooks for Дополнительные поля module.
  */
 
-function print_field_info($setting_name): void
+function print_field_info($setting_name)
 {
     $config = \Drupal::config('additional_field.settings');
     $my_setting = $config->get($setting_name);
@@ -18,13 +18,12 @@ function print_field_info($setting_name): void
         }
     }
     if(!empty($my_setting)){
-        print $my_setting;
+        return $my_setting;
     }elseif (!empty($table_arr[$setting_name])) {
-        print $table_arr[$setting_name];
-    }else{
-        print "Ошибка переменной!";
+        return $table_arr[$setting_name];
     }
 }
+
 
 function additional_field_preprocess(&$variables, $hook) {
     $form_config = \Drupal::config('additional_field.settings');
