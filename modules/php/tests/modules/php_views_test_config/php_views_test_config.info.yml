@@ -1,0 +1,11 @@
+name: 'PHP Views Test Config'
+type: module
+description: 'Provides PHP views for tests.'
+package: Testing
+dependencies:
+  - views
+
+# Information added by Drupal.org packaging script on 2024-04-04
+version: '8.x-1.2'
+project: 'php'
+datestamp: 1712233972
