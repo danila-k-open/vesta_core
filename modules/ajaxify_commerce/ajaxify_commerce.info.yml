@@ -2,4 +2,4 @@ name: Ajaxify Commerce
 type: module
 description: Добавление ajax в Commerce (корзина)
 package: Vesta
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^9 || ^10 || ^11
