@@ -2,4 +2,4 @@ name: Vesta Core
 type: module
 description: Модуль ядра Vesta
 package: Vesta
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^9 || ^10 || ^11
