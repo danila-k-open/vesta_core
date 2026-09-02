@@ -1,0 +1,18 @@
+services:
+  nocache_redirects.request_policy:
+    class: Drupal\nocache_redirects\PageCache\DenyQueryStringRequestPolicy
+    tags:
+      - { name: page_cache_request_policy, priority: 300 }
+      - { name: dynamic_page_cache_request_policy, priority: 300 }
+
+  nocache_redirects.response_policy:
+    class: Drupal\nocache_redirects\PageCache\NoCacheRedirectResponsePolicy
+    tags:
+      - { name: page_cache_response_policy, priority: 300 }
+      - { name: dynamic_page_cache_response_policy, priority: 300 }
+      
+  nocache_redirects.bad_path_policy:
+    class: Drupal\nocache_redirects\PageCache\DenyBadPathRequestPolicy
+    tags:
+      - { name: page_cache_request_policy, priority: 400 }
+      - { name: dynamic_page_cache_request_policy, priority: 400 }

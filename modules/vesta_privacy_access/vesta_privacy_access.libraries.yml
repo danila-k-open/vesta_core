@@ -1,0 +1,13 @@
+vesta_privacy_access:
+  version: 1.0
+  css:
+    base:
+      css/variables.css: {}
+    theme:
+      css/vesta_privacy_access.css: {}
+  js:
+    js/js.cookie.min.js: {}
+    js/main.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal

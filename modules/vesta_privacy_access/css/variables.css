@@ -1,0 +1,15 @@
+:root {
+    --vpa-font-family: Verdana;
+    --vpa-title-color: #303030;
+    --vpa-text-color: #303030;
+    --vpa-link-color: #2da0ce;
+    --vpa-btn-color: #FFFFFF;
+    --vpa-btn-color-hover: #FFFFFF;
+    --vpa-btn-bg: #2da0ce;
+    --vpa-btn-bg-hover: #2da0ce;
+    --vpa-btn-brd-width: 0;
+    --vpa-btn-brd-color: #2da0ce;
+    --vpa-btn-brd-color-hover: #2da0ce;
+    --vpa-btn-radius: .25rem;
+    --vpa-trans: .2s;
+}

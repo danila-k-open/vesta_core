@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @file
+ * Auto-attach Metatag field to newly created bundles.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Entity\Display\EntityFormDisplay;
+use Drupal\Core\Entity\Display\EntityViewDisplay;
+
+function metatag_autofield_entity_bundle_create($entity_type, $bundle) {
+    if ($entity_type !== 'node') {
+        return;
+    }
+
+    $field_name = 'field_metatags';
+
+    // Хранилище поля.
+    if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
+        FieldStorageConfig::create([
+            'field_name' => $field_name,
+            'entity_type' => $entity_type,
+            'type' => 'metatag',
+            'cardinality' => 1,
+            'translatable' => TRUE,
+        ])->save();
+    }
+
+    // Поле на бандле.
+    if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+        FieldConfig::create([
+            'field_name'  => $field_name,
+            'entity_type' => $entity_type,
+            'bundle'      => $bundle,
+            'label'       => 'Мета-теги',
+            'required'    => FALSE,
+            'translatable'=> TRUE,
+        ])->save();
+    }
+
+    // Загружаем/создаём form display (ВЕРНЫЙ класс!).
+    $form_display = \Drupal\Core\Entity\Entity\EntityFormDisplay::load("$entity_type.$bundle.default")
+        ?: \Drupal\Core\Entity\Entity\EntityFormDisplay::create([
+            'targetEntityType' => $entity_type,
+            'bundle' => $bundle,
+            'mode' => 'default',
+            'status' => TRUE,
+        ]);
+
+    // Виджет Metatag — правильный ID: metatag_firehose.
+    $form_display->setComponent($field_name, [
+        'type' => 'metatag_firehose',
+        'weight' => 90,
+        'region' => 'content',
+        'settings' => [],
+    ])->save();
+
+    // View display — тоже из Drupal\Core\Entity\Entity\* .
+    $view_display = \Drupal\Core\Entity\Entity\EntityViewDisplay::load("$entity_type.$bundle.default")
+        ?: \Drupal\Core\Entity\Entity\EntityViewDisplay::create([
+            'targetEntityType' => $entity_type,
+            'bundle' => $bundle,
+            'mode' => 'default',
+            'status' => TRUE,
+        ]);
+    $view_display->removeComponent($field_name)->save();
+}

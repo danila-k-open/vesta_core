@@ -1,0 +1,54 @@
+vesta_privacy_access.settings:
+  type: config_object
+  label: 'Vesta Privacy Access'
+  mapping:
+    ya_metrika_enable:
+      type: boolean
+      label: 'Включить блок подтверждения'
+    id_ya_metrika:
+      type: string
+      label: 'ID Яндекс Метрики'
+    mode:
+      type: string
+      label: 'Режим (short|full)'
+    privacy_text:
+      type: mapping
+      label: 'Текст согласия (Полный)'
+      mapping:
+        value:
+          type: text
+          label: 'Текст'
+        format:
+          type: string
+          label: 'Формат'
+    short_privacy_text:
+      type: mapping
+      label: 'Текст (Сокращенный)'
+      mapping:
+        value:
+          type: text
+          label: 'Текст'
+        format:
+          type: string
+          label: 'Формат'
+    # Набор цветов для Полного (как было)
+    font_family: { type: string, label: 'Шрифт' }
+    title_color: { type: string, label: 'Цвет заголовков' }
+    text_color: { type: string, label: 'Цвет текста' }
+    link_color: { type: string, label: 'Цвет ссылок' }
+    btn_color: { type: string, label: 'Цвет текста кнопки' }
+    btn_color_hover: { type: string, label: 'Цвет текста кнопки (hover)' }
+    btn_background: { type: string, label: 'Фон кнопки' }
+    btn_background_hover: { type: string, label: 'Фон кнопки (hover)' }
+    btn_border_width: { type: string, label: 'Ширина границы кнопки' }
+    btn_border_color: { type: string, label: 'Цвет границы кнопки' }
+    btn_border_color_hover: { type: string, label: 'Цвет границы кнопки (hover)' }
+    btn_border_radius: { type: string, label: 'Скругление' }
+    transition_animation: { type: string, label: 'Скорость анимации' }
+
+    # Урезанный набор цветов для Сокращенного (можно расширить при желании)
+    short_title_color: { type: string, label: 'Цвет заголовка (Short)' }
+    short_text_color: { type: string, label: 'Цвет текста (Short)' }
+    short_link_color: { type: string, label: 'Цвет ссылок (Short)' }
+    short_btn_color: { type: string, label: 'Цвет текста кнопки (Short)' }
+    short_btn_background: { type: string, label: 'Фон кнопки (Short)' }

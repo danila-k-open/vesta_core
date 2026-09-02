@@ -1,0 +1,6 @@
+domain_verification_upload.form:
+  title: 'Загрузка файла подтверждения домена'
+  description: 'Upload domain ownership verification files to the site web root.'
+  parent: system.admin_config_search
+  route_name: domain_verification_upload.form
+  weight: 100

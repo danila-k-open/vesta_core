@@ -1,0 +1,5 @@
+name: No cache redirects
+type: module
+description: 'Prevents caching of redirect responses in page cache.'
+core_version_requirement: ^10
+package: Vesta

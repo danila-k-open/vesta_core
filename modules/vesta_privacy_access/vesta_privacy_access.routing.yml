@@ -1,0 +1,7 @@
+vesta_privacy_access.settings_form:
+  path: '/admin/config/system/vesta_privacy_access'
+  defaults:
+    _form: '\Drupal\vesta_privacy_access\Form\VestaPrivacyAccessSettingsForm'
+    _title: 'Vesta Privacy Access Settings'
+  requirements:
+    _permission: 'administer site configuration'

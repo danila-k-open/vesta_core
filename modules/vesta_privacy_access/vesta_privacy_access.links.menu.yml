@@ -1,0 +1,6 @@
+vesta_privacy_access.settings_form:
+  title: 'Vesta Privacy Access'
+  description: 'Vesta Privacy Access Settings'
+  parent: system.admin_config_system
+  route_name: vesta_privacy_access.settings_form
+  weight: 2

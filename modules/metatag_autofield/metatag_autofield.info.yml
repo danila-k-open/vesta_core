@@ -1,0 +1,8 @@
+name: Metatag Auto Field
+type: module
+description: Automatically attaches a Metatag field to all content types (existing and newly created).
+core_version_requirement: ^10
+package: SEO
+dependencies:
+  - drupal:field
+  - metatag:metatag

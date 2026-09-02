@@ -1,0 +1,4 @@
+upload domain verification files:
+  title: 'Upload domain verification files to web root'
+  description: 'Allows uploading verification files (e.g., Google Search Console, Yandex Webmaster) into the site web root.'
+  restrict access: true

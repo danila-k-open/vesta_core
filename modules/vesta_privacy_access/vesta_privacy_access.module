@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Hook implementations.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function vesta_privacy_access_theme($existing, $type, $theme, $path) {
+    return [
+        'vesta_privacy_access_full' => [
+            'variables' => [
+                'privacy_text' => NULL,
+            ],
+            'template' => 'vesta-privacy-access-full',
+        ],
+        'vesta_privacy_access_short' => [
+            'variables' => [
+                'short_privacy_text' => NULL,
+            ],
+            'template' => 'vesta-privacy-access-short',
+        ],
+    ];
+}

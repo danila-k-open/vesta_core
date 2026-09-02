@@ -1,0 +1,78 @@
+<?php
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Helper: ensure field storage exists.
+ */
+function _metatag_autofield_ensure_storage(string $entity_type, string $field_name): void {
+    if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
+        FieldStorageConfig::create([
+            'field_name' => $field_name,
+            'entity_type' => $entity_type,
+            'type' => 'metatag',
+            'cardinality' => 1,
+            'translatable' => TRUE,
+        ])->save();
+    }
+}
+
+/**
+ * Helper: attach field to a bundle if missing.
+ */
+function _metatag_autofield_attach_field(string $entity_type, string $bundle, string $field_name, string $label = 'Мета-теги'): void {
+    if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+        FieldConfig::create([
+            'field_name'  => $field_name,
+            'entity_type' => $entity_type,
+            'bundle'      => $bundle,
+            'label'       => $label,
+            'required'    => FALSE,
+            'translatable'=> TRUE,
+            'settings'    => [],
+        ])->save();
+
+        // Put the widget on the default form display.
+        $form_display = \Drupal\Core\Entity\Entity\EntityFormDisplay::load("$entity_type.$bundle.default")
+            ?: \Drupal\Core\Entity\Entity\EntityFormDisplay::create([
+                'targetEntityType' => $entity_type,
+                'bundle' => $bundle,
+                'mode' => 'default',
+                'status' => TRUE,
+            ]);
+        // The widget id for Metatag is usually "metatag_firehose".
+        $form_display->setComponent($field_name, [
+            'type' => 'metatag_firehose',
+            'weight' => 90,
+            'region' => 'content',
+            'settings' => [],
+        ])->save();
+
+        // (Опционально) скрыть вывод на вью-дисплее, т.к. рендерит Theme/метатеги, а не поле.
+        $view_display = \Drupal\Core\Entity\Entity\EntityViewDisplay::load("$entity_type.$bundle.default")
+            ?: \Drupal\Core\Entity\Entity\EntityViewDisplay::create([
+                'targetEntityType' => $entity_type,
+                'bundle' => $bundle,
+                'mode' => 'default',
+                'status' => TRUE,
+            ]);
+        $view_display->removeComponent($field_name)->save();
+    }
+}
+
+/**
+ * Install: add field to all existing node bundles.
+ */
+function metatag_autofield_install() {
+    $entity_type = 'node';
+    $field_name = 'field_metatags';
+
+    _metatag_autofield_ensure_storage($entity_type, $field_name);
+
+    /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundle_info */
+    $bundle_info = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type);
+    foreach (array_keys($bundle_info) as $bundle) {
+        _metatag_autofield_attach_field($entity_type, $bundle, $field_name);
+    }
+}

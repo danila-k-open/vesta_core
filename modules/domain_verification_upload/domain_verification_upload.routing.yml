@@ -1,0 +1,7 @@
+domain_verification_upload.form:
+  path: '/admin/config/system/domain-verification-upload'
+  defaults:
+    _form: '\Drupal\domain_verification_upload\Form\DomainVerificationUploadForm'
+    _title: 'Загрузка файла подтверждения домена'
+  requirements:
+    _permission: 'upload domain verification files'

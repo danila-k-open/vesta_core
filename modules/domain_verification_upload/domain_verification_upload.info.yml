@@ -1,0 +1,5 @@
+name: Domain Verification Upload
+type: module
+description: Upload domain ownership verification files (Google, Yandex, etc.) into the site web root.
+core_version_requirement: ^10
+package: Custom

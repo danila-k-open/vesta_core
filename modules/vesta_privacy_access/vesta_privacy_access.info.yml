@@ -1,0 +1,8 @@
+name: 'Vesta Privacy Access Block'
+type: module
+description: 'Блок подтверждения использования Яндекс Метрики (Полный/Сокращенный варианты)'
+package: Vesta
+core_version_requirement: ^9 || ^10
+configure: vesta_privacy_access.settings_form
+dependencies:
+  - vesta_core

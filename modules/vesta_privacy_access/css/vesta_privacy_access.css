@@ -1,0 +1,167 @@
+.vpa-container {
+    font-family: var(--vpa-font-family);
+}
+
+.vpa-wrapper {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background: #fff;
+    border-top: 1px solid #eee;
+    padding: 16px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, .06);
+}
+
+.vpa-hidden {
+    display: none;
+}
+
+.vpa-content p, .vpa-content {
+    color: var(--vpa-text-color);
+    margin-bottom: 0;
+}
+
+.vpa-content strong {
+    color: var(--vpa-title-color);
+}
+
+.vpa-content a {
+    color: var(--vpa-link-color);
+    text-decoration: underline;
+}
+
+.vpa-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.vpa-actions .btn {
+    cursor: pointer;
+    transition: all var(--vpa-trans);
+    border-radius: var(--vpa-btn-radius);
+    padding: 8px 14px;
+    border: var(--vpa-btn-brd-width) solid var(--vpa-btn-brd-color);
+}
+
+.vpa-actions .btn-primary {
+    color: var(--vpa-btn-color);
+    background: var(--vpa-btn-bg);
+}
+
+.vpa-actions .btn-primary:hover {
+    color: var(--vpa-btn-color-hover);
+    background: var(--vpa-btn-bg-hover);
+    border-color: var(--vpa-btn-brd-color-hover);
+}
+
+.vpa-actions .btn-secondary {
+    background: transparent;
+    color: var(--vpa-link-color);
+    border-color: transparent;
+}
+
+/* Плавная анимация выезда снизу */
+.vpa-wrapper {
+    transition: transform var(--vpa-trans), opacity var(--vpa-trans);
+    will-change: transform, opacity;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0; /* уже было, на всякий */
+}
+
+/* Стартовое состояние (не в DOM из-за vpa-hidden, но как только уберем — остаётся скрытым трансформом) */
+.vpa-wrapper.vpa-slide {
+    transform: translateY(100%); /* за пределами экрана снизу */
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Конечное состояние — показано */
+.vpa-wrapper.vpa-visible {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    bottom: 20px;
+}
+
+.vpa-container.vpa-full .vpa-wrapper.vpa-visible {
+    bottom: 0;
+}
+
+.vpa-container.vpa-full .vpa-actions {
+    margin-top: 10px;
+}
+
+div#vpa-short-wrapper {
+    background: #fff;
+    box-shadow: 0 2px 9px rgba(0, 0, 0, .15);
+    border-radius: 12px;
+    margin: 0 auto;
+    max-width: 740px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: #032542;
+    align-items: center;
+}
+
+div#vpa-short-wrapper .vpa-content {
+    font-size: 12px;
+}
+
+/* Скрывающий класс, чтобы элемент не занимал место до и после анимации */
+.vpa-hidden {
+    display: none;
+}
+
+/* Зона свайпа для закрытия (мобилки) */
+.vpa-close-zone {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+}
+
+.vpa-close-zone .vpa-close-el {
+    width: 38px;
+    height: 4px;
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #dddde1;
+    border-radius: 2px;
+}
+
+/* На мобильных показываем «ручку» и добавим верхний отступ под неё */
+@media screen and (max-width: 767px) {
+    .vpa-close-zone {
+        display: block;
+    }
+
+    .vpa-wrapper {
+        padding-top: 40px;
+    }
+
+    /* можно сделать выезд без зазора от низа */
+    .vpa-wrapper.vpa-visible {
+        bottom: 0;
+    }
+
+    div#vpa-short-wrapper {
+        padding: 32px 15px 15px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vpa-wrapper {
+        transition: none;
+    }
+}
