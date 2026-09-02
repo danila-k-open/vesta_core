@@ -1,8 +1,0 @@
-name: 'Vesta User Account'
-type: module
-description: 'Модуль для замены шаблонов страниц пользователя и заказов.'
-package: Custom
-core_version_requirement: ^10
-dependencies:
-  - drupal:user
-  - drupal:commerce
