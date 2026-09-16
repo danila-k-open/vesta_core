@@ -1,0 +1,6 @@
+additional_field.settings_form:
+  title: 'Дополнительные поля'
+  description: 'Дополнительные поля.'
+  parent: system.admin_config_system
+  route_name: additional_field.settings_form
+  weight: 2

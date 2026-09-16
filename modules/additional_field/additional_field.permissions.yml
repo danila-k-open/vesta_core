@@ -1,0 +1,4 @@
+additional_info:
+  title: 'Разрешения Additional Field'
+  description: 'Разрешения на изменение конфигурации Дополнительных полей'
+  restrict access: true

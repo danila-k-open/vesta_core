@@ -1,0 +1,49 @@
+# Schema for the configuration files of the Additional Field module.
+additional_field.settings:
+  type: config_object
+  label: 'Настройки дополнительных полей'
+  mapping:
+    phone_number:
+      type: string
+      label: 'Номер телефона'
+    email:
+      type: string
+      label: 'Адрес электронной почты'
+    working_hours:
+      type: string
+      label: 'Режим работы'
+    company_address:
+      type: string
+      label: 'Адрес компании'
+    yandex_map_code:
+      type: text
+      label: 'Код Яндекс карты'
+    additional_info:
+      type: text
+      label: 'Дополнительная информация'
+    social_links:
+      type: sequence
+      label: 'Социальные сети'
+      sequence:
+        type: mapping
+        label: 'Социальная сеть'
+        mapping:
+          variable_name:
+            type: string
+            label: 'Название переменной'
+          variable_value:
+            type: string
+            label: 'Значение переменной'
+    custom_variables:
+      type: sequence
+      label: 'Произвольные переменные'
+      sequence:
+        type: mapping
+        label: 'Произвольная переменная'
+        mapping:
+          variable_name:
+            type: string
+            label: 'Название переменной'
+          variable_value:
+            type: string
+            label: 'Значение переменной'

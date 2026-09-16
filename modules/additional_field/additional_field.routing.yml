@@ -1,0 +1,7 @@
+additional_field.settings_form:
+  path: '/admin/config/system/additional-field'
+  defaults:
+    _title: 'Дополнительные поля'
+    _form: 'Drupal\additional_field\Form\SettingsForm'
+  requirements:
+    _permission: 'additional_info'

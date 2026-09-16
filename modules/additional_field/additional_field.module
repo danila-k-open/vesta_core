@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for the Additional Field module.
+ */
+
+/**
+ * Prints a configured site-wide variable using safe HTML output.
+ *
+ * Usage: <?php print_field_info('variable_name'); ?>
+ */
+function print_field_info(string $setting_name): void {
+  print \Drupal::service('additional_field.manager')->getPhpOutput($setting_name);
+}

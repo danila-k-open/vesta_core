@@ -1,0 +1,178 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for the Additional Field module.
+ */
+
+/**
+ * Migrates legacy settings to the Drupal 10/11 configuration structure.
+ */
+function additional_field_update_10001(): string {
+  $config = \Drupal::configFactory()->getEditable('additional_field.settings');
+
+  if (trim((string) $config->get('email')) === '') {
+    $config->set('email', (string) $config->get('mail'));
+  }
+
+  if (trim((string) $config->get('company_address')) === '') {
+    $address_parts = [];
+    foreach (['index', 'city', 'street', 'house'] as $legacy_key) {
+      $part = trim((string) $config->get($legacy_key));
+      if ($part !== '') {
+        $address_parts[] = $part;
+      }
+    }
+    $config->set('company_address', implode(', ', $address_parts));
+  }
+
+  $social_links = $config->get('social_links');
+  $social_links = is_array($social_links) ? $social_links : [];
+  $existing_social_names = [];
+  foreach ($social_links as $row) {
+    if (is_array($row)) {
+      $existing_social_names[trim((string) ($row['variable_name'] ?? ''))] = TRUE;
+    }
+  }
+  foreach (['viber', 'whatsapp', 'vk', 'telegram'] as $legacy_key) {
+    $value = trim((string) $config->get($legacy_key));
+    if ($value !== '' && !isset($existing_social_names[$legacy_key])) {
+      $social_links[] = [
+        'variable_name' => $legacy_key,
+        'variable_value' => $value,
+      ];
+    }
+  }
+
+  $custom_variables = $config->get('custom_variables');
+  $custom_variables = is_array($custom_variables) ? $custom_variables : [];
+  $legacy_rows = $config->get('table');
+  if (is_array($legacy_rows)) {
+    foreach ($legacy_rows as $row) {
+      if (is_array($row) && !isset($row['variable_name']) && count($row) === 1) {
+        $nested_row = reset($row);
+        $row = is_array($nested_row) ? $nested_row : $row;
+      }
+      if (!is_array($row)) {
+        continue;
+      }
+
+      $candidate = [
+        'variable_name' => trim((string) ($row['variable_name'] ?? '')),
+        'variable_value' => trim((string) ($row['variable_value'] ?? '')),
+      ];
+      if (!in_array($candidate, $custom_variables, TRUE)) {
+        $custom_variables[] = $candidate;
+      }
+    }
+  }
+
+  $used_names = array_fill_keys(_additional_field_update_unavailable_names(), TRUE);
+  $config->set('social_links', _additional_field_update_normalize_rows($social_links, $used_names));
+  $config->set('custom_variables', _additional_field_update_normalize_rows($custom_variables, $used_names));
+
+  foreach (['mail', 'viber', 'whatsapp', 'vk', 'telegram', 'index', 'city', 'street', 'house', 'table'] as $legacy_key) {
+    $config->clear($legacy_key);
+  }
+
+  foreach (['phone_number', 'email', 'working_hours', 'company_address', 'yandex_map_code', 'additional_info'] as $key) {
+    if ($config->get($key) === NULL) {
+      $config->set($key, '');
+    }
+  }
+
+  $config->save();
+  return 'Старые настройки Additional Field перенесены в новую структуру.';
+}
+
+/**
+ * Normalizes legacy rows to valid, unique Twig variable names.
+ *
+ * Invalid or duplicate names receive deterministic legacy_* names so their
+ * values remain accessible after the update instead of being silently lost.
+ *
+ * @param mixed $rows
+ *   Legacy rows.
+ * @param array<string, bool> $used_names
+ *   Names already unavailable across both dynamic collections.
+ *
+ * @return array<int, array{variable_name: string, variable_value: string}>
+ *   Normalized rows.
+ */
+function _additional_field_update_normalize_rows(mixed $rows, array &$used_names): array {
+  if (!is_array($rows)) {
+    return [];
+  }
+
+  $normalized = [];
+  foreach ($rows as $row) {
+    if (!is_array($row)) {
+      continue;
+    }
+
+    $name = trim((string) ($row['variable_name'] ?? ''));
+    $value = trim((string) ($row['variable_value'] ?? ''));
+    if ($name === '' && $value === '') {
+      continue;
+    }
+
+    $base = strtolower($name);
+    $base = preg_replace('/[^a-z0-9_]+/', '_', $base) ?? '';
+    $base = trim($base, '_');
+    if ($base === '' || preg_match('/^[a-z]/', $base) !== 1) {
+      $base = $base === '' ? 'legacy_variable' : 'legacy_' . $base;
+    }
+    if (isset($used_names[$base])) {
+      $base = 'legacy_' . $base;
+    }
+    $base = substr($base, 0, 112);
+
+    $candidate = $base;
+    $suffix = 2;
+    while (isset($used_names[$candidate])) {
+      $candidate = substr($base, 0, 112) . '_' . $suffix;
+      $suffix++;
+    }
+
+    $used_names[$candidate] = TRUE;
+    $normalized[] = [
+      'variable_name' => $candidate,
+      'variable_value' => $value,
+    ];
+  }
+
+  return $normalized;
+}
+
+/**
+ * Returns fixed and reserved names unavailable during legacy migration.
+ *
+ * @return string[]
+ *   Unavailable variable names.
+ */
+function _additional_field_update_unavailable_names(): array {
+  return [
+    'phone_number',
+    'email',
+    'working_hours',
+    'company_address',
+    'yandex_map_code',
+    'additional_info',
+    '_charset',
+    '_context',
+    'app',
+    'attributes',
+    'block',
+    'content',
+    'false',
+    'loop',
+    'node',
+    'none',
+    'null',
+    'page',
+    'parent',
+    'this',
+    'true',
+    'user',
+  ];
+}

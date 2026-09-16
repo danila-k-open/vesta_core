@@ -1,0 +1,16 @@
+services:
+  additional_field.manager:
+    class: Drupal\additional_field\AdditionalFieldManager
+    arguments: ['@config.factory']
+
+  additional_field.twig_extension:
+    class: Drupal\additional_field\Twig\AdditionalFieldTwigExtension
+    arguments: ['@additional_field.manager']
+    tags:
+      - { name: twig.extension }
+
+  additional_field.config_save_subscriber:
+    class: Drupal\additional_field\EventSubscriber\ConfigSaveSubscriber
+    arguments: ['@cache_tags.invalidator']
+    tags:
+      - { name: event_subscriber }
